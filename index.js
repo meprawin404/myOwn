@@ -4,6 +4,7 @@ const path = require("path");
 const connectToMongoDb = require("./connect.js");
 const bookingRoute = require("./routes/route.booking.js");
 const ballingRoute = require("./routes/route.balling.js");
+const userRoute = require("./routes/router.user.js");
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //routes
 app.use("/booking", bookingRoute);
 app.use("/balling", ballingRoute);
+app.use("/user", userRoute);
 
 
 //database connection 
