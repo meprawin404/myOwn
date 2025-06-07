@@ -1,0 +1,11 @@
+<nav>
+    <a href="/">Home</a>
+    <% if (user) { %>
+        <a href="/booking">New Booking</a>
+        <a href="/balling">Booking Summary</a>
+        <a href="/user/signout">Sign Out</a>
+    <% } else { %>
+        <a href="/user/signin">Sign In</a>
+        <a href="/user/signup">Sign Up</a>
+    <% } %>
+</nav>

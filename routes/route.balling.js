@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const balling = require("../models/model.balling");
+const Balling = require("../models/model.balling");
 const Booking = require("../models/model.booking");
 
 const router = Router();

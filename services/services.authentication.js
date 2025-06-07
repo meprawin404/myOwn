@@ -1,0 +1,24 @@
+const JWT = require("jsonwebtoken");
+
+function generateUserToken(user){
+    const SECRET = process.env.SECRET; 
+    const payload = {
+        _id: user._id,
+        email: user.email,
+        profileImageUrl: user.profileImageUrl,
+        role: user.role
+    }
+    const token = JWT.sign(payload, SECRET);
+    return token;
+}
+
+function validateToken(token){
+    const SECRET = process.env.SECRET; 
+    const payload = JWT.verify(token, SECRET);
+    return payload;
+}
+
+module.exports = {
+    generateUserToken,
+    validateToken
+}

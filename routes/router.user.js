@@ -10,10 +10,20 @@ router.get('/signin', (req, res)=>{
 
 router.post("/signin", async (req, res)=>{
     const {email, password } = req.body;
-    const user = await User.matchPassword(email, password);
-    console.log(user);
+    try{
+        const token = await User.matchPasswordandGenerateToken(email, password);
 
-    return res.redirect("/booking");
+        return res.cookie("token", token).render("home");
+    }catch(err){
+        return res.render("signin",{
+            error: "Incorrect password or email"
+        });
+    }
+})
+
+//handle signout
+router.get("/signout", (req, res)=>{
+    res.clearCookie("token").redirect("/user/signin");
 })
 
 

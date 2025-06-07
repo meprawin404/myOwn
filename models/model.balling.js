@@ -19,9 +19,9 @@ const ballingSchema = new Schema({
     }
 })
 
-const balling = model("balling", ballingSchema);
+const Balling = model("balling", ballingSchema);
 
-module.exports = balling;
+module.exports = Balling;
 
 
     // category:{

@@ -8,13 +8,16 @@
 <body>
     <header>
         <h1>Sign In</h1>
-        <nav>
-            <a href="/booking">Home</a>
-        </nav>
+        <%- include('partials/navbar') %>
         <hr>
     </header>
     <main>
         <div class="card">
+            <% if (typeof error !== "undefined") { %>
+                <div class="error-message" style="color: #b00020; margin-bottom: 1em;">
+                    <%= error %>
+                </div>
+            <% } %>
             <form action="/user/signin" method="POST" class="booking-form">
                 <div class="form-row">
                     <label for="email">Email:</label>

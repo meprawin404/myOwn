@@ -13,7 +13,7 @@ router.post("/", async (req, res)=>{
         category,
         description,
         size,
-        duration
+        duration,
     })
 
     res.redirect(`/balling/${newBooking._id}`);
