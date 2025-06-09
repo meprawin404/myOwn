@@ -14,7 +14,8 @@ router.post("/", async (req, res)=>{
         description,
         size,
         duration,
-    })
+        createdBy: req.user._id
+    });
 
     res.redirect(`/balling/${newBooking._id}`);
 })

@@ -1,6 +1,7 @@
 <nav>
     <a href="/">Home</a>
     <% if (user) { %>
+         <a><%= user.fullName %></a>
         <a href="/booking">New Booking</a>
         <a href="/balling">Booking Summary</a>
         <a href="/user/signout">Sign Out</a>
