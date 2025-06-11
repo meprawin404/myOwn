@@ -7,6 +7,7 @@ const bookingRoute = require("./routes/route.booking.js");
 const ballingRoute = require("./routes/route.balling.js");
 const userRoute = require("./routes/router.user.js");
 const { checkForAuthenticationCookie, restrictToLoggedInUser } = require("./middlewares/middleware.authentication");
+const { log } = require("console");
 
 dotenv.config();
 
@@ -63,3 +64,5 @@ app.listen(PORT, ()=>{
     console.log(`Server running at port:${PORT}`);
     
 })
+
+
