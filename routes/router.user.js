@@ -5,7 +5,7 @@ const router = Router();
 
 //handle sigin
 router.get('/signin', (req, res)=>{
-    return res.render("signin");
+    return res.render("signin" );
 })
 
 router.post("/signin", async (req, res)=>{

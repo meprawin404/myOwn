@@ -6,7 +6,7 @@ const connectToMongoDb = require("./connect.js");
 const bookingRoute = require("./routes/route.booking.js");
 const ballingRoute = require("./routes/route.balling.js");
 const userRoute = require("./routes/router.user.js");
-const { checkForAuthenticationCookie } = require("./middlewares/middleware.authentication");
+const { checkForAuthenticationCookie, restrictToLoggedInUser } = require("./middlewares/middleware.authentication");
 
 dotenv.config();
 
@@ -43,7 +43,7 @@ app.use((req, res, next) => {
 
 
 //routes
-app.use("/booking", bookingRoute);
+app.use("/booking",restrictToLoggedInUser("token"), bookingRoute);
 app.use("/balling", ballingRoute);
 app.use("/user", userRoute);
 

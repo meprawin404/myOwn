@@ -13,10 +13,15 @@ function generateUserToken(user){
     return token;
 }
 
-function validateToken(token){
-    const SECRET = process.env.SECRET; 
-    const payload = JWT.verify(token, SECRET);
-    return payload;
+function validateToken(token) {
+    const SECRET = process.env.SECRET;
+    try {
+        const payload = JWT.verify(token, SECRET);
+        return payload;
+    } catch (err) {
+        console.error("Token Validation Error:", err.message);
+        throw err;
+    }
 }
 
 module.exports = {

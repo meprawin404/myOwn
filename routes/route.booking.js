@@ -3,9 +3,10 @@ const booking = require("../models/model.booking");
 
 const router = Router();
 
-router.get("/", (req, res)=>{
+router.get("/", (req, res) => {
+    console.log("GET /booking route hit"); // Debugging
     return res.render("booking");
-})
+});
 
 router.post("/", async (req, res)=>{
     const {category, description, size, duration} = req.body;
