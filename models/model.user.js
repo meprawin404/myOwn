@@ -27,6 +27,10 @@ const userSchema = new Schema({
         type:String,
         enum:["Tanent", "Landlord", "Enterprise"],
         default: "Tanent"
+    },
+        isAdmin: {
+        type: Boolean,
+        default: false
     }
 }, {timestamps: true});
 

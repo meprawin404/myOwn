@@ -36,7 +36,7 @@ function restrictToLoggedInUser(cookieName) {
             return res.redirect("/user/signin"); // Redirect if the token is invalid
         }
 
-        next(); // Proceed to the next middleware or route handler
+        next(); 
     };
 }
 

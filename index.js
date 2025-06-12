@@ -45,7 +45,7 @@ app.use((req, res, next) => {
 
 //routes
 app.use("/booking",restrictToLoggedInUser("token"), bookingRoute);
-app.use("/balling", ballingRoute);
+app.use("/balling",restrictToLoggedInUser("token"), ballingRoute);
 app.use("/user", userRoute);
 
 
