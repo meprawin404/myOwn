@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const booking = require("../models/model.booking");
+const Booking = require("../models/model.booking");
 
 const router = Router();
 
@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
 
 router.post("/", async (req, res)=>{
     const {category, description, size, duration} = req.body;
-    const newBooking = await booking.create({
+    const newBooking = await Booking.create({
         category,
         description,
         size,

@@ -6,6 +6,7 @@ const connectToMongoDb = require("./connect.js");
 const bookingRoute = require("./routes/route.booking.js");
 const ballingRoute = require("./routes/route.balling.js");
 const userRoute = require("./routes/router.user.js");
+const landlordRoute = require("./routes/route.property.js");
 const { checkForAuthenticationCookie, restrictToLoggedInUser } = require("./middlewares/middleware.authentication");
 const { log } = require("console");
 
@@ -46,14 +47,10 @@ app.use((req, res, next) => {
 //routes
 app.use("/booking",restrictToLoggedInUser("token"), bookingRoute);
 app.use("/balling",restrictToLoggedInUser("token"), ballingRoute);
+app.use("/landlord",restrictToLoggedInUser("token"), landlordRoute)
 app.use("/user", userRoute);
 
 
-
-
-app.get("/test", (req, res) => {
-    res.json({ user: req.user });
-});
 
 
 app.get("/", (req, res)=>{
