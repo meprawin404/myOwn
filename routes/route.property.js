@@ -4,10 +4,14 @@ const Property = require("../models/model.property");
 
 const router = Router()
 
+
+//render frontEnd for the add property route
 router.get("/add-property", (req, res) => {
     res.render("addProperty"); // Render the addProperty.ejs file
 });
 
+
+//handle property listing
 router.post("/add-property", upload.array("images", 5), async (req, res) =>{
 
     const { address, size, rent } = req.body;
@@ -27,6 +31,15 @@ router.post("/add-property", upload.array("images", 5), async (req, res) =>{
 
     }catch(err){
         res.status(500).send("Error adding property");
+    }
+})
+
+router.get("/properties", async (req, res)=>{
+    try{
+        const properties = await Property.find({ listedBy: req.user._id});
+        res.render("properties", { properties });
+    }catch(err){
+        res.status(500).send("Error listing properties");
     }
 })
 

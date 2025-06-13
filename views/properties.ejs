@@ -1,0 +1,31 @@
+<table>
+    <thead>
+        <tr>
+            <th>Address</th>
+            <th>Size</th>
+            <th>Rent</th>
+            <th>Available</th>
+            <th>Images</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% properties.forEach(property => { %>
+            <tr>
+                <td><%= property.address %></td>
+                <td><%= property.size %></td>
+                <td><%= property.rent %></td>
+                <td><%= property.available ? "Yes" : "No" %></td>
+                <td>
+                    <% property.photo.forEach(image => { %> <!-- Use 'photo' instead of 'images' -->
+                        <img src="<%= image %>" alt="Property Image" style="width: 100px; height: auto;">
+                    <% }) %>
+                </td>
+                <td>
+                    <a href="/properties/<%= property._id %>/edit">Edit</a>
+                    <a href="/properties/<%= property._id %>/delete">Delete</a>
+                </td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
