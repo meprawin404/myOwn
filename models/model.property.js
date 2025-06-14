@@ -26,8 +26,11 @@ const propertySchema = new Schema({
     photo:{
         type:[String],
         default: []
+    },
+    contact: {
+        type: String,
+        required: true
     }
-
 })
 
 

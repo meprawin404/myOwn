@@ -2,13 +2,15 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+
 const connectToMongoDb = require("./connect.js");
 const bookingRoute = require("./routes/route.booking.js");
 const ballingRoute = require("./routes/route.balling.js");
 const userRoute = require("./routes/router.user.js");
-const landlordRoute = require("./routes/route.property.js");
-const { checkForAuthenticationCookie, restrictToLoggedInUser } = require("./middlewares/middleware.authentication");
-const { log } = require("console");
+const landlordRoute = require("./routes/route.landlordProperty.js");
+const listAllProperties = require("./routes/route.listProperties.js");
+const { checkForAuthenticationCookie, restrictToLoggedInUser, restrictToRole } = require("./middlewares/middleware.authentication");
+
 
 dotenv.config();
 
@@ -45,9 +47,10 @@ app.use((req, res, next) => {
 
 
 //routes
+app.use("/properties", restrictToLoggedInUser("token"), listAllProperties)
 app.use("/booking",restrictToLoggedInUser("token"), bookingRoute);
 app.use("/balling",restrictToLoggedInUser("token"), ballingRoute);
-app.use("/landlord",restrictToLoggedInUser("token"), landlordRoute)
+app.use("/landlord",restrictToLoggedInUser("token"),restrictToRole("Landlord"), landlordRoute)
 app.use("/user", userRoute);
 
 

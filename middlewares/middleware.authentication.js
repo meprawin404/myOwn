@@ -1,5 +1,7 @@
 const { validateToken } = require("../services/services.authentication");
 
+
+//middleware for the checking the cookies with every request
 function checkForAuthenticationCookie(cookieName) {
     return (req, res, next) => {
         const tokenCookieValue = req.cookies[cookieName];
@@ -20,6 +22,7 @@ function checkForAuthenticationCookie(cookieName) {
 }
 
 
+//middleware for checking loggedin users
 function restrictToLoggedInUser(cookieName) {
     return (req, res, next) => {
         const tokenCookieValue = req.cookies[cookieName];
@@ -40,7 +43,19 @@ function restrictToLoggedInUser(cookieName) {
     };
 }
 
+
+function restrictToRole(role) {
+    return (req, res, next) => {
+        if (req.user && req.user.role === role) { // Compare req.user.role with the role parameter
+            return next();
+        }
+
+        return res.redirect("/"); // Redirect if the user does not have the required role
+    };
+}
+
 module.exports = {
   checkForAuthenticationCookie,
-  restrictToLoggedInUser
+  restrictToLoggedInUser,
+  restrictToRole
 };

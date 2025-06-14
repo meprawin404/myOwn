@@ -4,7 +4,6 @@ const Booking = require("../models/model.booking");
 const router = Router();
 
 router.get("/", (req, res) => {
-    console.log("GET /booking route hit"); // Debugging
     return res.render("booking");
 });
 

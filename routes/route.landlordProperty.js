@@ -14,7 +14,7 @@ router.get("/add-property", (req, res) => {
 //handle property listing
 router.post("/add-property", upload.array("images", 5), async (req, res) =>{
 
-    const { address, size, rent } = req.body;
+    const { address, size, rent, contact } = req.body;
 
     try{
         const imagepath = req.files.map(file => `/uploads/${file.filename}`);
@@ -24,21 +24,23 @@ router.post("/add-property", upload.array("images", 5), async (req, res) =>{
             size,
             rent,
             listedBy: req.user._id,
-            photo: imagepath
+            photo: imagepath,
+            contact
         });
 
-        res.redirect("/properties");
+        res.redirect("/landlord/properties");
 
     }catch(err){
         res.status(500).send("Error adding property");
     }
 })
 
-router.get("/properties", async (req, res)=>{
-    try{
-        const properties = await Property.find({ listedBy: req.user._id});
-        res.render("properties", { properties });
-    }catch(err){
+router.get("/properties", async (req, res) => {
+    try {
+        const properties = await Property.find({ listedBy: req.user._id });
+        res.render("properties", { properties }); // Pass properties to the view
+    } catch (err) {
+        console.error("Error listing properties:", err.message);
         res.status(500).send("Error listing properties");
     }
 })

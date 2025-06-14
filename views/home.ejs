@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,13 +16,16 @@
     </header>
     <main class="home-main">
         <section class="hero">
-
-            <%= JSON.stringify(user) %>
             <h2>Your Trusted Partner for Smart Storage & Booking</h2>
             <p>
                 At <span class="brand">Booking App</span>, we make booking and managing your storage needs simple, secure, and efficient. Whether you need to store vehicles, furniture, kitchen stuff, or anything else, our platform is designed to give you peace of mind and flexibility.
             </p>
-            <a href="/booking" class="cta-btn">Get Started</a>
+            <% if (user && user.role === "Tanent") { %>
+                <div class="tanent-options">
+                    <a href="/booking" class="cta-btn">Book Storage</a>
+                    <a href="/properties" class="cta-btn">See Listed Properties</a>
+                </div>
+            <% } %>
         </section>
         <section class="about">
             <h3>About Our Company</h3>
