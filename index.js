@@ -38,6 +38,16 @@ app.use(cookieParser());
 app.use(checkForAuthenticationCookie("token"));
 
 
+
+//for google oauth
+const session = require("express-session");
+const passport = require("./passport");
+
+app.use(session({ secret: process.env.SECRET, resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 // Middleware to make user available in all views
 app.use((req, res, next) => {
     // console.log(req.user);
