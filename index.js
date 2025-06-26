@@ -1,5 +1,5 @@
 const express = require("express");
-const dotenv = require("dotenv");
+require('dotenv').config();
 const path = require("path");
 const cookieParser = require("cookie-parser");
 
@@ -10,9 +10,9 @@ const userRoute = require("./routes/router.user.js");
 const landlordRoute = require("./routes/route.landlordProperty.js");
 const listAllProperties = require("./routes/route.listProperties.js");
 const { checkForAuthenticationCookie, restrictToLoggedInUser, restrictToRole } = require("./middlewares/middleware.authentication");
+const passport = require('./config/passport.js')
+const session = require("express-session");
 
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
@@ -40,8 +40,6 @@ app.use(checkForAuthenticationCookie("token"));
 
 
 //for google oauth
-const session = require("express-session");
-const passport = require("./passport");
 
 app.use(session({ secret: process.env.SECRET, resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
