@@ -40,7 +40,6 @@ app.use(checkForAuthenticationCookie("token"));
 
 
 //for google oauth
-
 app.use(session({ secret: process.env.SECRET, resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
