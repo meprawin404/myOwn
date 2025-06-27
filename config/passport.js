@@ -15,7 +15,7 @@ passport.use(new GoogleStrategy({
         fullName: profile.displayName,
         email: profile.emails[0].value,
         profileImageUrl: profile.photos[0].value,
-        password: randomBytes(16).toString(), 
+        password: randomBytes(16).toString("hex"), 
         role: null,
       });
     }
