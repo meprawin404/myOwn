@@ -61,8 +61,6 @@ app.use("/landlord",restrictToLoggedInUser("token"),restrictToRole("Landlord"), 
 app.use("/user", userRoute);
 
 
-
-
 app.get("/", (req, res)=>{
     return res.render("home");
 })

@@ -1,4 +1,3 @@
-const { text } = require("express");
 const nodemailer = require("nodemailer");
 
 const sendEmail = async (option) => {
