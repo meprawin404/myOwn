@@ -26,14 +26,15 @@ passport.use(
           emailVerificationOTP: otp,
           emailVerificationExpires: Date.now() + 10 * 60 * 1000,
         });
+
+        // Send OTP email
+        await sendEmail({
+          email: user.email,
+          subject: "Your OTP Code",
+          message: `Hi ${user.fullName},\n\nYour OTP code is: ${otp}\n\nIt is valid for 10 minutes.`,
+        });
       }
 
-      // Send OTP email
-      await sendEmail({
-        email: user.email,
-        subject: "Your OTP Code",
-        message: `Hi ${user.fullName},\n\nYour OTP code is: ${otp}\n\nIt is valid for 10 minutes.`,
-      });
       return done(null, user);
     }
   )
@@ -48,4 +49,3 @@ passport.deserializeUser(async (id, done) => {
 });
 
 module.exports = passport;
-
