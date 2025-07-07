@@ -147,10 +147,6 @@ router.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/user/signin" }),
   (req, res) => {
-    if (!req.user.isEmailVerified) {
-      // Redirect to OTP entry page
-      return res.render("enter-otp", { email: req.user.email });
-    }
 
     if (!req.user.role) {
       req.session.tempUserId = req.user._id;

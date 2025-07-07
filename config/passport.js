@@ -13,9 +13,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       let user = await User.findOne({ email: profile.emails[0].value });
-      let otp;
       if (!user) {
-        otp = Math.floor(100000 + Math.random() * 900000).toString();
         user = await User.create({
           fullName: profile.displayName,
           email: profile.emails[0].value,
@@ -23,15 +21,14 @@ passport.use(
           password: randomBytes(16).toString("hex"),
           role: null,
           isEmailVerified: false,
-          emailVerificationOTP: otp,
-          emailVerificationExpires: Date.now() + 10 * 60 * 1000,
+          emailVerificationOTP: undefined,
+          emailVerificationExpires: undefined,
         });
-
-        // Send OTP email
+        // Send welcome email
         await sendEmail({
           email: user.email,
-          subject: "Your OTP Code",
-          message: `Hi ${user.fullName},\n\nYour OTP code is: ${otp}\n\nIt is valid for 10 minutes.`,
+          subject: "Welcome to Rento!",
+          message: `Hi ${user.fullName},\n\nWelcome to Rento! Your account has been created successfully.\n\nEnjoy our service!`,
         });
       }
 
