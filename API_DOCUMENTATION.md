@@ -34,6 +34,20 @@ Authorization: Bearer YOUR_JWT_TOKEN
 }
 ```
 
+## 📊 Status Codes
+
+| Status Code | Description | When Used |
+|-------------|-------------|-----------|
+| 200 | OK | Successful GET requests, login, logout |
+| 201 | Created | Registration, property creation, booking creation |
+| 400 | Bad Request | Validation errors, invalid OTP, already verified |
+| 401 | Unauthorized | Invalid credentials, missing/invalid token |
+| 403 | Forbidden | Email not verified, insufficient permissions |
+| 404 | Not Found | User not found, booking not found |
+| 409 | Conflict | Email already registered |
+| 429 | Too Many Requests | Rate limiting exceeded |
+| 500 | Internal Server Error | Authentication errors, server errors |
+
 ## Rate Limiting
 - General API: 100 requests per 15 minutes
 - Auth endpoints: 5 requests per 15 minutes
@@ -50,7 +64,10 @@ Check if the API is running.
 GET /
 ```
 
-**Response:**
+**Status Codes:**
+- `200 OK` - API is running
+
+**Response (200):**
 ```json
 {
   "success": true,
@@ -91,7 +108,13 @@ Register a new user.
 - `fullName`: 2-50 characters
 - `role`: Must be "Tenant", "Landlord", or "Enterprise"
 
-**Response:**
+**Status Codes:**
+- `201 Created` - Registration successful
+- `400 Bad Request` - Validation errors
+- `409 Conflict` - Email already registered
+- `500 Internal Server Error` - Server error
+
+**Success Response (201):**
 ```json
 {
   "success": true,
@@ -99,6 +122,16 @@ Register a new user.
   "data": {
     "email": "john@example.com"
   },
+  "timestamp": "2025-07-10T10:30:00.000Z"
+}
+```
+
+**Error Response (409):**
+```json
+{
+  "success": false,
+  "error": "Email Already Registered",
+  "message": "Please sign in or use another email",
   "timestamp": "2025-07-10T10:30:00.000Z"
 }
 ```
@@ -114,7 +147,13 @@ Verify email with OTP.
 }
 ```
 
-**Response:**
+**Status Codes:**
+- `200 OK` - Email verified successfully
+- `400 Bad Request` - Invalid OTP, expired OTP, already verified, no OTP found
+- `404 Not Found` - User not found
+- `500 Internal Server Error` - Server error
+
+**Success Response (200):**
 ```json
 {
   "success": true,
@@ -131,6 +170,16 @@ Verify email with OTP.
 }
 ```
 
+**Error Response (400):**
+```json
+{
+  "success": false,
+  "error": "Invalid OTP",
+  "message": "The verification code is incorrect",
+  "timestamp": "2025-07-10T10:30:00.000Z"
+}
+```
+
 ### POST /api/user/resend-otp
 Resend OTP for email verification.
 
@@ -141,11 +190,28 @@ Resend OTP for email verification.
 }
 ```
 
-**Response:**
+**Status Codes:**
+- `200 OK` - New verification code sent
+- `400 Bad Request` - Email already verified
+- `404 Not Found` - User not found
+- `429 Too Many Requests` - Rate limit exceeded (wait 1 minute)
+- `500 Internal Server Error` - Server error
+
+**Success Response (200):**
 ```json
 {
   "success": true,
   "message": "New verification code sent to your email",
+  "timestamp": "2025-07-10T10:30:00.000Z"
+}
+```
+
+**Error Response (429):**
+```json
+{
+  "success": false,
+  "error": "Too Many Requests",
+  "message": "Please wait at least 1 minute before requesting a new code",
   "timestamp": "2025-07-10T10:30:00.000Z"
 }
 ```
@@ -161,7 +227,14 @@ Login user.
 }
 ```
 
-**Response:**
+**Status Codes:**
+- `200 OK` - Login successful
+- `401 Unauthorized` - Invalid credentials
+- `403 Forbidden` - Email not verified (new OTP sent)
+- `400 Bad Request` - Validation errors
+- `500 Internal Server Error` - Server error
+
+**Success Response (200):**
 ```json
 {
   "success": true,
@@ -180,12 +253,26 @@ Login user.
 }
 ```
 
+**Error Response (403):**
+```json
+{
+  "success": false,
+  "error": "Email Not Verified",
+  "message": "Please verify your email. New verification code sent to your email.",
+  "timestamp": "2025-07-10T10:30:00.000Z"
+}
+```
+
 ### POST /api/user/signout
 Logout user.
 
 **Headers:** `Authorization: Bearer TOKEN`
 
-**Response:**
+**Status Codes:**
+- `200 OK` - Logout successful
+- `500 Internal Server Error` - Logout failed
+
+**Success Response (200):**
 ```json
 {
   "success": true,
@@ -204,11 +291,27 @@ Request password reset.
 }
 ```
 
-**Response:**
+**Status Codes:**
+- `200 OK` - Reset link sent (or email doesn't exist - security)
+- `429 Too Many Requests` - Rate limit exceeded (wait 5 minutes)
+- `400 Bad Request` - Validation errors
+- `500 Internal Server Error` - Server error
+
+**Success Response (200):**
 ```json
 {
   "success": true,
   "message": "If an account with this email exists, a password reset link has been sent",
+  "timestamp": "2025-07-10T10:30:00.000Z"
+}
+```
+
+**Error Response (429):**
+```json
+{
+  "success": false,
+  "error": "Too Many Requests",
+  "message": "Please wait at least 5 minutes before requesting another password reset",
   "timestamp": "2025-07-10T10:30:00.000Z"
 }
 ```
@@ -224,11 +327,26 @@ Reset password with token.
 }
 ```
 
-**Response:**
+**Status Codes:**
+- `200 OK` - Password reset successful
+- `400 Bad Request` - Invalid or expired token, validation errors
+- `500 Internal Server Error` - Server error
+
+**Success Response (200):**
 ```json
 {
   "success": true,
   "message": "Password reset successful. You can now login with your new password",
+  "timestamp": "2025-07-10T10:30:00.000Z"
+}
+```
+
+**Error Response (400):**
+```json
+{
+  "success": false,
+  "error": "Invalid or Expired Token",
+  "message": "Password reset token is invalid or has expired",
   "timestamp": "2025-07-10T10:30:00.000Z"
 }
 ```
@@ -245,7 +363,13 @@ Set role for OAuth users.
 }
 ```
 
-**Response:**
+**Status Codes:**
+- `200 OK` - Role updated successfully
+- `400 Bad Request` - Role already set, validation errors
+- `401 Unauthorized` - Authentication required
+- `500 Internal Server Error` - Server error
+
+**Success Response (200):**
 ```json
 {
   "success": true,
@@ -263,6 +387,16 @@ Set role for OAuth users.
 }
 ```
 
+**Error Response (400):**
+```json
+{
+  "success": false,
+  "error": "Role Already Set",
+  "message": "You have already selected a role",
+  "timestamp": "2025-07-10T10:30:00.000Z"
+}
+```
+
 ---
 
 ## 🏢 Properties
@@ -272,7 +406,13 @@ Get all properties.
 
 **Headers:** `Authorization: Bearer TOKEN`
 
-**Response:**
+**Status Codes:**
+- `200 OK` - Properties retrieved successfully
+- `401 Unauthorized` - Missing or invalid token
+- `403 Forbidden` - Email not verified
+- `500 Internal Server Error` - Server error
+
+**Success Response (200):**
 ```json
 {
   "success": true,
@@ -297,6 +437,16 @@ Get all properties.
 }
 ```
 
+**Error Response (401):**
+```json
+{
+  "success": false,
+  "error": "Authentication Required",
+  "message": "Please login to access this resource",
+  "timestamp": "2025-07-10T10:30:00.000Z"
+}
+```
+
 ---
 
 ## 🏠 Landlord Operations
@@ -308,7 +458,13 @@ Get property form requirements.
 
 **Headers:** `Authorization: Bearer TOKEN`
 
-**Response:**
+**Status Codes:**
+- `200 OK` - Form requirements retrieved
+- `401 Unauthorized` - Missing or invalid token
+- `403 Forbidden` - Not a landlord or email not verified
+- `500 Internal Server Error` - Server error
+
+**Success Response (200):**
 ```json
 {
   "success": true,
@@ -340,7 +496,14 @@ contact: "+1234567890"
 images: [file1.jpg, file2.jpg] // Optional, max 5 files
 ```
 
-**Response:**
+**Status Codes:**
+- `201 Created` - Property added successfully
+- `400 Bad Request` - Validation errors, file upload errors
+- `401 Unauthorized` - Missing or invalid token
+- `403 Forbidden` - Not a landlord or email not verified
+- `500 Internal Server Error` - Server error
+
+**Success Response (201):**
 ```json
 {
   "success": true,
@@ -365,7 +528,13 @@ Get landlord's properties.
 
 **Headers:** `Authorization: Bearer TOKEN`
 
-**Response:**
+**Status Codes:**
+- `200 OK` - Properties retrieved successfully
+- `401 Unauthorized` - Missing or invalid token
+- `403 Forbidden` - Not a landlord or email not verified
+- `500 Internal Server Error` - Server error
+
+**Success Response (200):**
 ```json
 {
   "success": true,
@@ -398,7 +567,13 @@ Get booking form requirements.
 
 **Headers:** `Authorization: Bearer TOKEN`
 
-**Response:**
+**Status Codes:**
+- `200 OK` - Form requirements retrieved
+- `401 Unauthorized` - Missing or invalid token
+- `403 Forbidden` - Email not verified
+- `500 Internal Server Error` - Server error
+
+**Success Response (200):**
 ```json
 {
   "success": true,
@@ -430,7 +605,14 @@ Create a new booking.
 }
 ```
 
-**Response:**
+**Status Codes:**
+- `201 Created` - Booking created successfully
+- `400 Bad Request` - Validation errors
+- `401 Unauthorized` - Missing or invalid token
+- `403 Forbidden` - Email not verified
+- `500 Internal Server Error` - Server error
+
+**Success Response (201):**
 ```json
 {
   "success": true,
