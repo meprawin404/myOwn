@@ -1,61 +1,112 @@
-const { validateToken } = require("../services/services.authentication");
+const { verifyUserToken } = require("../services/services.authentication");
+const User = require("../models/model.user");
+const CustomError = require("../utils/customError");
+const { sendErrorResponse } = require("../utils/responseFormat");
 
-
-//middleware for the checking the cookies with every request
 function checkForAuthenticationCookie(cookieName) {
-    return (req, res, next) => {
-        const tokenCookieValue = req.cookies[cookieName];
-
-        if (!tokenCookieValue) {
-            return next();
-        }
-
+    return async (req, res, next) => {
         try {
-            const userPayload = validateToken(tokenCookieValue);
-            req.user = userPayload;
-        } catch (err) {
-            console.error("Invalid token:", err.message);
+            const tokenCookieValue = req.cookies?.[cookieName];
+            const authHeader = req.headers.authorization;
+            
+            let token = null;
+            
+            // Check for token in Authorization header first
+            if (authHeader && authHeader.startsWith('Bearer ')) {
+                token = authHeader.substring(7);
+            } else if (tokenCookieValue) {
+                token = tokenCookieValue;
+            }
+            
+            if (!token) {
+                req.user = null;
+                return next();
+            }
+            
+            const userPayload = verifyUserToken(token);
+            const user = await User.findById(userPayload._id).select('-password -salt');
+            
+            if (!user) {
+                req.user = null;
+                return next();
+            }
+            
+            req.user = user;
+            next();
+        } catch (error) {
+            req.user = null;
+            next();
         }
-
-        next();
     };
 }
 
-
-//middleware for checking loggedin users
 function restrictToLoggedInUser(cookieName) {
-    return (req, res, next) => {
-        const tokenCookieValue = req.cookies[cookieName];
-        
-        if (!tokenCookieValue) {
-            return res.redirect("/user/signin");
-        }
-
+    return async (req, res, next) => {
         try {
-            const userPayload = validateToken(tokenCookieValue); // Validate the token
-            req.user = userPayload; // Attach the user payload to the request
-        } catch (err) {
-            console.error("Invalid or expired token:", err.message);
-            return res.redirect("/user/signin"); // Redirect if the token is invalid
+            const tokenCookieValue = req.cookies?.[cookieName];
+            const authHeader = req.headers.authorization;
+            
+            let token = null;
+            
+            if (authHeader && authHeader.startsWith('Bearer ')) {
+                token = authHeader.substring(7);
+            } else if (tokenCookieValue) {
+                token = tokenCookieValue;
+            }
+            
+            if (!token) {
+                return sendErrorResponse(res, 401, 'Authentication Required', 'Please login to access this resource');
+            }
+            
+            const userPayload = verifyUserToken(token);
+            const user = await User.findById(userPayload._id).select('-password -salt');
+            
+            if (!user) {
+                return sendErrorResponse(res, 401, 'Invalid Token', 'User not found. Please login again');
+            }
+            
+            if (!user.isEmailVerified) {
+                return sendErrorResponse(res, 403, 'Email Not Verified', 'Please verify your email before accessing this resource');
+            }
+            
+            req.user = user;
+            next();
+        } catch (error) {
+            if (error.name === 'JsonWebTokenError') {
+                return sendErrorResponse(res, 401, 'Invalid Token', 'Please login again');
+            }
+            if (error.name === 'TokenExpiredError') {
+                return sendErrorResponse(res, 401, 'Token Expired', 'Your session has expired. Please login again');
+            }
+            return sendErrorResponse(res, 500, 'Authentication Error', 'Error verifying token');
         }
-
-        next(); 
     };
 }
 
-
-function restrictToRole(role) {
+function restrictToRole(...roles) {
     return (req, res, next) => {
-        if (req.user && req.user.role === role) { // Compare req.user.role with the role parameter
-            return next();
+        try {
+            if (!req.user) {
+                return sendErrorResponse(res, 401, 'Authentication Required', 'Please login to access this resource');
+            }
+            
+            if (!req.user.role) {
+                return sendErrorResponse(res, 403, 'Role Not Set', 'Please select your role first');
+            }
+            
+            if (!roles.includes(req.user.role)) {
+                return sendErrorResponse(res, 403, 'Insufficient Permissions', `Access denied. Required role: ${roles.join(' or ')}`);
+            }
+            
+            next();
+        } catch (error) {
+            return sendErrorResponse(res, 500, 'Authorization Error', 'Error checking permissions');
         }
-
-        return res.redirect("/"); // Redirect if the user does not have the required role
     };
 }
 
 module.exports = {
-  checkForAuthenticationCookie,
-  restrictToLoggedInUser,
-  restrictToRole
+    checkForAuthenticationCookie,
+    restrictToLoggedInUser,
+    restrictToRole
 };

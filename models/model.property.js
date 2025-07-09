@@ -31,18 +31,8 @@ const propertySchema = new Schema({
         type: String,
         required: true
     }
-})
-
+});
 
 const Property = model('property', propertySchema);
 
 module.exports = Property;
-
-
-
-// address
-// size
-// rent
-// listedBY
-// available
-// image

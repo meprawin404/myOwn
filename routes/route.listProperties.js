@@ -1,16 +1,17 @@
 const { Router } = require("express");
 const Properties = require("../models/model.property");
+const asyncErrorHandler = require("../utils/asyncErrorHandler");
+const { sendSuccessResponse, sendErrorResponse } = require("../utils/responseFormat");
 
 const router = Router();
 
-router.get("/", async (req, res) =>{
-    try{
-        const properties = await Properties.find({});
-        res.render("listAllProperties", { properties });
-    }catch(err){
-        console.log("Error listing properties", err.message);
-        res.status(500).send("Error listing properties");
-    }
-})
+router.get("/", asyncErrorHandler(async (req, res) => {
+    const properties = await Properties.find({});
+    
+    return sendSuccessResponse(res, 200, 'All properties retrieved successfully', {
+        count: properties.length,
+        properties
+    });
+}));
 
 module.exports = router;

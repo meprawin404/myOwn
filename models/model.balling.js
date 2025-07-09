@@ -4,7 +4,7 @@ const ballingSchema = new Schema({
     category:{
         type:String,
         required:true,
-        enum:['vahicle', 'forniture', 'kitchen stuff', 'others']
+        enum:['vahicle', 'forniture', 'kitchen_stuff', 'others']
     },
     size:{
         type:String,
@@ -17,26 +17,8 @@ const ballingSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref: "booking"
     }
-})
+});
 
 const Balling = model("balling", ballingSchema);
 
 module.exports = Balling;
-
-
-    // category:{
-    //     type:String,
-    //     required:true,
-    //     enum:['vahicle', 'forniture', 'kitchen stuff', 'others']
-    // },
-    // description:{
-    //     type:String,
-    //     required:true
-    // },
-    // size:{
-    //     type:String,
-    //     enum:['small', 'medium', 'large']
-    // },
-    // duration:{
-    //     type:Number
-    // },

@@ -26,5 +26,6 @@ function validateToken(token) {
 
 module.exports = {
     generateUserToken,
-    validateToken
+    validateToken,
+    verifyUserToken: validateToken
 }
